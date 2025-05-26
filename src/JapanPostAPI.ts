@@ -40,18 +40,23 @@ export class JapanPostAPI {
   constructor(tokenInit: TokenInit, options: JapanPostAPIOptions = { baseUrl: defaultBaseUrl }) {
     this.#baseUrl = options.baseUrl ?? defaultBaseUrl;
     this.#tokenInit = tokenInit;
+    const tokenPassed = typeof tokenInit === "string";
+    if (tokenPassed) {
+      this.#token = tokenInit;
+    }
     this.#tokenExpiresAt = 0;
-    this.#autoTokenRefresh = options.autoTokenRefresh ?? true;
+    this.#autoTokenRefresh = options.autoTokenRefresh ?? !tokenPassed;
   }
 
   async initToken(options?: JapanPostTokenInitOptions): Promise<void> {
-    if (typeof this.#tokenInit === "string") {
-      throw new Error("Pass JapanPostTokenInitOptions to either the constructor or this method");
+    if (typeof this.#tokenInit === "string" && !options) {
+      throw new Error("Pass client_id + secret_key to either the constructor or this method");
     }
+    const tokenInit = this.#tokenInit as JapanPostTokenInitOptions;
     const response = await this.token({
       grant_type: "client_credentials",
-      client_id: options?.client_id ?? this.#tokenInit.client_id,
-      secret_key: options?.secret_key ?? this.#tokenInit.secret_key,
+      client_id: options?.client_id ?? tokenInit.client_id,
+      secret_key: options?.secret_key ?? tokenInit.secret_key,
     });
     if (response instanceof Error) {
       throw response;
@@ -68,11 +73,20 @@ export class JapanPostAPI {
     return Date.now() > this.#tokenExpiresAt;
   }
 
-  async token(request: TokenRequest): Promise<TokenResponse> {
+  async token(request?: TokenRequest): Promise<TokenResponse> {
+    if (typeof this.#tokenInit === "string" && !request) {
+      throw new Error("Pass client_id + secret_key to the constructor");
+    }
+    const tokenInit = this.#tokenInit as JapanPostTokenInitOptions;
+    const formParams = request ?? {
+      grant_type: "client_credentials",
+      client_id: tokenInit.client_id,
+      secret_key: tokenInit.secret_key,
+    };
     return this.#call<TokenResponse>({
       method: "POST",
       path: "/api/v1/j/token",
-      formParams: request,
+      formParams,
       callTokenRefresh: false,
     });
   }
