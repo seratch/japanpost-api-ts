@@ -1,9 +1,9 @@
 import { TokenRequest } from "./request/TokenRequest";
 import { TokenResponse } from "./response/TokenResponse";
-import { Address, SearchcodeResponse } from "./response/SearchcodeResponse";
+import { SearchcodeResponse } from "./response/SearchcodeResponse";
 import { SearchcodeRequest } from "./request/SearchcodeRequest";
 import { AddresszipRequest } from "./request/AddresszipRequest";
-import { AddressZip, AddresszipResponse } from "./response/AddresszipResponse";
+import { AddresszipResponse } from "./response/AddresszipResponse";
 import { JapanPostAPIError } from "./JapanPostAPIError";
 import { debugLog } from "./Logger";
 

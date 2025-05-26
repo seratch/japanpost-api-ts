@@ -12,7 +12,6 @@ Refer to the service's [official documentation](https://lp-api.da.pf.japanpost.j
 
 以下のような機能・特徴があります：
 
-- 依存ライブラリなしで TypeScript で書かれています
 - API トークン取得を簡単に行えます
 - 郵便番号、事業所個別郵便番号、デジタルアドレスの共通検索
 - 住所の一部から該当する郵便番号・住所情報を検索
@@ -21,7 +20,6 @@ Refer to the service's [official documentation](https://lp-api.da.pf.japanpost.j
 
 Here are the key features:
 
-- Fully written in TypeScript, zero dependencies
 - Obtain authentication tokens using client credentials
 - Search for addresses by code
 - Search for zip codes by address
