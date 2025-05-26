@@ -1,4 +1,6 @@
-# Japan Post Service API Client / 郵便番号・デジタルアドレス API クライアント
+# Japan Post Service API Client
+
+[![npm version](https://badge.fury.io/js/japanpost-api.svg)](https://badge.fury.io/js/japanpost-api)
 
 [郵便番号・デジタルアドレス API](https://lp-api.da.pf.japanpost.jp/) の全てのエンドポイントに対応した TypeScript ライブラリです。
 
@@ -10,7 +12,7 @@ Refer to the service's [official documentation](https://lp-api.da.pf.japanpost.j
 
 以下のような機能・特徴があります：
 
-- 依存ライブラリなしで TypeScript で書かれてます
+- 依存ライブラリなしで TypeScript で書かれています
 - API トークン取得を簡単に行えます
 - 郵便番号、事業所個別郵便番号、デジタルアドレスの共通検索
 - 住所の一部から該当する郵便番号・住所情報を検索

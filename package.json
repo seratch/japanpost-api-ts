@@ -1,9 +1,13 @@
 {
   "name": "japanpost-api",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Japan Post Servive API client",
   "keywords": [
-    "TypeScript"
+    "TypeScript",
+    "Japan",
+    "Japan Post Service",
+    "API",
+    "Postal Code"
   ],
   "homepage": "https://github.com/seratch/japanpost-api-ts#readme",
   "bugs": {
@@ -30,8 +34,5 @@
     "@types/node": "^22.15.21",
     "typescript": "^5.8.3",
     "vitest": "^3.1.4"
-  },
-  "dependencies": {
-    "debug": "^4.4.1"
   }
 }
