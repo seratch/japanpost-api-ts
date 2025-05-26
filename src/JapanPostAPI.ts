@@ -78,12 +78,13 @@ export class JapanPostAPI {
   }
 
   async searchcode(request: SearchcodeRequest): Promise<SearchcodeResponse> {
+    const searchCode = request.search_code.replace("-", "");
     const queryParams: Record<string, any> = { ...request };
     delete queryParams["search_code"];
     return this.#call<SearchcodeResponse>({
       method: "GET",
       path: "/api/v1/searchcode/{search_code}",
-      pathParams: { search_code: request.search_code },
+      pathParams: { search_code: searchCode },
       queryParams,
       callTokenRefresh: this.#autoTokenRefresh,
     });
