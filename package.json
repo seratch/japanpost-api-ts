@@ -1,0 +1,37 @@
+{
+  "name": "japanpost-api",
+  "version": "0.0.1",
+  "description": "Japan Post Servive API client",
+  "keywords": [
+    "TypeScript"
+  ],
+  "homepage": "https://github.com/seratch/japanpost-api-ts#readme",
+  "bugs": {
+    "url": "https://github.com/seratch/japanpost-api-ts/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seratch/japanpost-api-ts.git"
+  },
+  "license": "MIT",
+  "author": "Kazuhiro Sera",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:clean": "rm -rf ./dist && tsc",
+    "format": "npx @biomejs/biome format --write src/ test/",
+    "test": "npm run format && npx vitest",
+    "ci-test": "npx vitest run --coverage"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/debug": "^4.1.12",
+    "@types/node": "^22.15.21",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.4"
+  },
+  "dependencies": {
+    "debug": "^4.4.1"
+  }
+}
