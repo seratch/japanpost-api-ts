@@ -1,5 +1,5 @@
 import { assert, test, describe, expect } from "vitest";
-import { JapanPostAPI } from "../src/JapanPostAPI";
+import { JapanPostAPI } from "../src/index";
 import { debugLog } from "../src/Logger";
 
 const testEndpoint = "https://stub-qz73x.da.pf.japanpost.jp";
@@ -96,5 +96,9 @@ describe("JapanPostAPI", () => {
   test("fails to init without credentials", async () => {
     const client = new JapanPostAPI("token", { baseUrl: testEndpoint });
     await expect(client.initToken()).rejects.toThrow();
+  });
+  test("fails to call token without credentials", async () => {
+    const client = new JapanPostAPI("token", { baseUrl: testEndpoint });
+    await expect(client.token()).rejects.toThrow();
   });
 });

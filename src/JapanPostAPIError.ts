@@ -1,9 +1,14 @@
+export interface JapanPostAPIErrorOptions {
+  status: number;
+  body: string;
+  headers: Record<string, string>;
+}
 export class JapanPostAPIError extends Error {
   status: number;
   headers: Record<string, string>;
   body: string;
   error: JapanPostAPIErrorBody | null;
-  constructor(status: number, body: string, headers: Record<string, string>) {
+  constructor({ status, body, headers }: JapanPostAPIErrorOptions) {
     const bodyText = body.replace(/\n/g, "").substring(0, 200);
     super(`JapanPostAPIError: (status: ${status}, body: ${bodyText} ...)`);
 

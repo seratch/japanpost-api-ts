@@ -58,9 +58,6 @@ export class JapanPostAPI {
       client_id: options?.client_id ?? tokenInit.client_id,
       secret_key: options?.secret_key ?? tokenInit.secret_key,
     });
-    if (response instanceof Error) {
-      throw response;
-    }
     this.setToken(response.token);
     this.#tokenExpiresAt = Date.now() + response.expires_in * 1000;
   }
@@ -194,13 +191,21 @@ export class JapanPostAPI {
       });
       const body = JSON.parse(responseBody);
       if (body.error_code) {
-        throw new JapanPostAPIError(response.status, responseBody, Object.fromEntries(response.headers));
+        throw new JapanPostAPIError({
+          status: response.status,
+          body: responseBody,
+          headers: Object.fromEntries(response.headers),
+        });
       }
       return body;
     } catch (e) {
       debugLog(() => `JapanPost API error: ${e}`);
       if (response) {
-        throw new JapanPostAPIError(response.status, responseBody || "", Object.fromEntries(response.headers));
+        throw new JapanPostAPIError({
+          status: response.status,
+          body: responseBody || "",
+          headers: Object.fromEntries(response.headers),
+        });
       } else {
         throw e;
       }
