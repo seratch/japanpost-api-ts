@@ -1,6 +1,6 @@
 {
   "name": "japanpost-api",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "description": "Japan Post Servive API client",
   "keywords": [
     "TypeScript",
@@ -20,7 +20,7 @@
   "license": "MIT",
   "author": "Kazuhiro Sera",
   "type": "commonjs",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "build:clean": "rm -rf ./dist && tsc",
