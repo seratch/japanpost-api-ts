@@ -1,6 +1,6 @@
 {
   "name": "japanpost-api",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Japan Post Servive API client",
   "keywords": [
     "TypeScript",

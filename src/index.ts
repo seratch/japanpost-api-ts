@@ -1,4 +1,5 @@
-export type { JapanPostAPIOptions, JapanPostTokenInitOptions, JapanPostAPI } from "./JapanPostAPI";
+export { JapanPostAPI } from "./JapanPostAPI";
+export type { JapanPostAPIOptions, JapanPostTokenInitOptions } from "./JapanPostAPI";
 export type { JapanPostAPIError, JapanPostAPIErrorBody } from "./JapanPostAPIError";
 export type { TokenRequest } from "./request/TokenRequest";
 export type { TokenResponse } from "./response/TokenResponse";
