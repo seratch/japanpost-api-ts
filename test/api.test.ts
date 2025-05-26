@@ -72,7 +72,7 @@ describe("JapanPostAPI", () => {
     for await (const page of client.addresszipAll({
       pref_code: "13",
       city_code: "13101",
-      limit: 10,
+      limit: 300,
     })) {
       debugLog(() => JSON.stringify(page, null, 2));
     }
