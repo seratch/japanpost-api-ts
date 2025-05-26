@@ -1,6 +1,7 @@
 # Japan Post Service API Client
 
 [![npm version](https://badge.fury.io/js/japanpost-api.svg)](https://badge.fury.io/js/japanpost-api)
+[![CI](https://github.com/seratch/japanpost-api-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/seratch/japanpost-api-ts/actions/workflows/ci.yml)
 
 [郵便番号・デジタルアドレス API](https://lp-api.da.pf.japanpost.jp/) の全てのエンドポイントに対応した TypeScript ライブラリです。
 
