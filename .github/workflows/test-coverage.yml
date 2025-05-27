@@ -1,0 +1,62 @@
+name: Test Coverage
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      JAPAN_POST_CLIENT_ID: ${{ secrets.JAPAN_POST_CLIENT_ID }}
+      JAPAN_POST_SECRET_KEY: ${{ secrets.JAPAN_POST_SECRET_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm run ci-test
+  coverage-comment:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v4
+      - name: 📦 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: ✅ Run tests with coverage
+        run: pnpm ci-test
+      - name: ⚙️ Parse coverage
+        id: parse_cov
+        run: |
+          SUMMARY_FILE=coverage/coverage-summary.json
+          echo "## Coverage Summary" > /tmp/coverage_comment.md
+          echo "" >> /tmp/coverage_comment.md
+          echo "| Type | % |" >> /tmp/coverage_comment.md
+          echo "| ---- | - |" >> /tmp/coverage_comment.md
+          for key in statements branches functions lines; do
+            pct=$(cat $SUMMARY_FILE | jq ".total.${key}.pct")
+            echo "| ${key} | ${pct}% |" >> /tmp/coverage_comment.md
+          done
+          echo "comment_file=/tmp/coverage_comment.md" >> $GITHUB_OUTPUT
+      - name: 💬 Post PR comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: vitest-coverage
+          path: ${{ steps.parse_cov.outputs.comment_file }}
+          recreate: true

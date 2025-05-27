@@ -26,7 +26,7 @@
     "build:clean": "rm -rf ./dist && tsc",
     "format": "npx @biomejs/biome format --write src/ test/",
     "test": "npm run format && npx vitest",
-    "ci-test": "npx vitest run --coverage"
+    "ci-test": "npx vitest --config ./vitest.config.ts --coverage run"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
