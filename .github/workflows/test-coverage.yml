@@ -6,7 +6,7 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  test:
+  coverage-comment:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
@@ -23,24 +23,6 @@ jobs:
         run: npm install
       - name: Run tests
         run: npm run ci-test
-  coverage-comment:
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: read
-    steps:
-      - name: ⬇️ Checkout
-        uses: actions/checkout@v4
-      - name: 📦 Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'pnpm'
-      - name: 📦 Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: ✅ Run tests with coverage
-        run: pnpm ci-test
       - name: ⚙️ Parse coverage
         id: parse_cov
         run: |
