@@ -1,10 +1,11 @@
-name: CI
+name: Tests
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+    types: [opened, synchronize, reopened]
 
 jobs:
   test:
@@ -12,10 +13,7 @@ jobs:
     timeout-minutes: 5
     strategy:
       matrix:
-        node-version: [20, 22, 24]
-    env:
-      JAPAN_POST_CLIENT_ID: ${{ secrets.JAPAN_POST_CLIENT_ID }}
-      JAPAN_POST_SECRET_KEY: ${{ secrets.JAPAN_POST_SECRET_KEY }}
+        node-version: ['20', '22', '24']
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,4 +24,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Run tests
+        env:
+          JAPAN_POST_CLIENT_ID: ${{ secrets.JAPAN_POST_CLIENT_ID }}
+          JAPAN_POST_SECRET_KEY: ${{ secrets.JAPAN_POST_SECRET_KEY }}
         run: npm run ci-test
