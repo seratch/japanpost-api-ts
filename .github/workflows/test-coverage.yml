@@ -6,12 +6,9 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  coverage-comment:
+  test-coverage:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    env:
-      JAPAN_POST_CLIENT_ID: ${{ secrets.JAPAN_POST_CLIENT_ID }}
-      JAPAN_POST_SECRET_KEY: ${{ secrets.JAPAN_POST_SECRET_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -22,6 +19,9 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Run tests
+        env:
+          JAPAN_POST_CLIENT_ID: ${{ secrets.JAPAN_POST_CLIENT_ID }}
+          JAPAN_POST_SECRET_KEY: ${{ secrets.JAPAN_POST_SECRET_KEY }}
         run: npm run ci-test
       - name: ⚙️ Parse coverage
         id: parse_cov
