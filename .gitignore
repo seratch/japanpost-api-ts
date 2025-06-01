@@ -176,3 +176,5 @@ tmp/
 .env
 .vscode/
 .idea/
+
+*.tgz

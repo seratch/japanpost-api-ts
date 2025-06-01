@@ -10,6 +10,7 @@ vite.config.ts
 .github/
 .idea/
 .vscode/
-vite.config.mjs
 coverage/
 release.sh
+vitest.config.ts
+*.tgz
