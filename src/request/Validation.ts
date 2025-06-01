@@ -1,6 +1,6 @@
-import { ValidationError } from "./JapanPostAPIError";
-import { SearchcodeRequest } from "./request/SearchcodeRequest";
-import { AddresszipRequest } from "./request/AddresszipRequest";
+import { ValidationError } from "../JapanPostAPIError";
+import { SearchcodeRequest } from "./SearchcodeRequest";
+import { AddresszipRequest } from "./AddresszipRequest";
 
 /**
  * Prefecture code Union type (01-47)

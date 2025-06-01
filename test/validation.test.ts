@@ -5,7 +5,7 @@ import {
   isValidPrefCode,
   isValidPrefName,
   getPrefCodeFromName,
-} from "../src/validation";
+} from "../src/request/Validation";
 import { ValidationError } from "../src/JapanPostAPIError";
 
 describe("Validation functionality", () => {
