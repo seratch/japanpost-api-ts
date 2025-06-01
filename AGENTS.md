@@ -1,4 +1,3 @@
----
 # AGENTS.md
 
 This document describes the core agents (classes, utilities, and relevant types) that orchestrate the main logic for the `japanpost-api` TypeScript library.
