@@ -1,7 +1,7 @@
 # Japan Post Service API Client
 
 [![npm version](https://badge.fury.io/js/japanpost-api.svg)](https://badge.fury.io/js/japanpost-api)
-[![CI](https://github.com/seratch/japanpost-api-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/seratch/japanpost-api-ts/actions/workflows/tests.yml)
+[![CI](https://github.com/seratch/japanpost-api-ts/actions/workflows/tests.yml/badge.svg)](https://github.com/seratch/japanpost-api-ts/actions/workflows/tests.yml)
 
 > 📖 **For English README, please see [README.md](README.md)** / **英語版のREADMEは[README.md](README.md)をご覧ください**
 
