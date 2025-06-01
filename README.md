@@ -235,6 +235,30 @@ const request: SearchcodeRequest = {
 const prefCode: PrefCode = '13'; // Type-safe prefecture code
 ```
 
+## Contributing
+
+We welcome contributions! This project uses automated releases based on [Conventional Commits](https://www.conventionalcommits.org/).
+
+### Quick Start for Contributors
+
+1. Fork and clone the repository
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Make your changes with proper commit messages:
+   - `feat:` for new features
+   - `fix:` for bug fixes
+   - `docs:` for documentation changes
+4. Run tests: `npm test`
+5. Create a pull request
+
+### Automated Releases
+
+Releases are automatically published when changes are merged to the main branch:
+- `feat:` → Minor version bump
+- `fix:` → Patch version bump  
+- `feat!:` or `BREAKING CHANGE:` → Major version bump
+
+For detailed information, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## License
 
 This project is licensed under the MIT License. See [LICENSE.txt](LICENSE.txt) for details.

@@ -234,6 +234,30 @@ const request: SearchcodeRequest = {
 const prefCode: PrefCode = '13'; // 型安全な都道府県コード
 ```
 
+## コントリビューション
+
+コントリビューションを歓迎します！このプロジェクトは[Conventional Commits](https://www.conventionalcommits.org/)に基づく自動リリースを使用しています。
+
+### コントリビューター向けクイックスタート
+
+1. リポジトリをフォーク＆クローン
+2. 機能ブランチを作成: `git checkout -b feature/your-feature`
+3. 適切なコミットメッセージで変更を行う:
+   - `feat:` 新機能
+   - `fix:` バグ修正
+   - `docs:` ドキュメント変更
+4. テストを実行: `npm test`
+5. プルリクエストを作成
+
+### 自動リリース
+
+mainブランチへの変更がマージされると、自動的にリリースが公開されます：
+- `feat:` → マイナーバージョンアップ
+- `fix:` → パッチバージョンアップ
+- `feat!:` または `BREAKING CHANGE:` → メジャーバージョンアップ
+
+詳細については[CONTRIBUTING.md](CONTRIBUTING.md)をご覧ください。
+
 ## ライセンス
 
 このプロジェクトはMITライセンスの下でライセンスされています。詳細については[LICENSE.txt](LICENSE.txt)をご覧ください。 

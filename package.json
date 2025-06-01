@@ -21,18 +21,29 @@
   "author": "Kazuhiro Sera",
   "type": "commonjs",
   "main": "dist/index.js",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "README_ja.md",
+    "LICENSE.txt"
+  ],
   "scripts": {
     "build": "tsc",
     "build:clean": "rm -rf ./dist && tsc",
     "format": "npx @biomejs/biome format --write src/ test/",
     "test": "npm run format && npx vitest",
-    "ci-test": "npx vitest --config ./vitest.config.ts --coverage run"
+    "ci-test": "npx vitest --config ./vitest.config.ts --coverage run",
+    "prepublishOnly": "npm run build:clean && npm test",
+    "semantic-release": "semantic-release"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/debug": "^4.1.12",
     "@types/node": "^22.15.25",
     "@vitest/coverage-v8": "^3.1.4",
+    "semantic-release": "^23.0.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "typescript": "^5.8.3",
     "vitest": "^3.1.4"
   },
