@@ -4,8 +4,10 @@ import { SearchcodeResponse } from "./response/SearchcodeResponse";
 import { SearchcodeRequest } from "./request/SearchcodeRequest";
 import { AddresszipRequest } from "./request/AddresszipRequest";
 import { AddresszipResponse } from "./response/AddresszipResponse";
-import { JapanPostAPIError } from "./JapanPostAPIError";
+import { JapanPostAPIError, NetworkError } from "./JapanPostAPIError";
 import { debugLog } from "./Logger";
+import { validateSearchcodeRequest, validateAddresszipRequest } from "./validation";
+import { withRetry, RetryOptions, CircuitBreaker, CircuitBreakerOptions } from "./retry";
 
 const defaultBaseUrl = "https://api.da.pf.japanpost.jp";
 
@@ -17,6 +19,12 @@ export interface JapanPostTokenInitOptions {
 export interface JapanPostAPIOptions {
   baseUrl?: string;
   autoTokenRefresh?: boolean;
+  /** Retry configuration */
+  retryOptions?: RetryOptions;
+  /** Circuit breaker configuration */
+  circuitBreakerOptions?: CircuitBreakerOptions;
+  /** Whether to enable validation (default: true) */
+  enableValidation?: boolean;
 }
 
 type TokenInit = string | JapanPostTokenInitOptions;
@@ -36,6 +44,9 @@ export class JapanPostAPI {
   #token: string | undefined;
   #tokenExpiresAt: number; // millis
   #autoTokenRefresh: boolean;
+  #retryOptions: RetryOptions;
+  #circuitBreaker: CircuitBreaker;
+  #enableValidation: boolean;
 
   constructor(tokenInit: TokenInit, options: JapanPostAPIOptions = { baseUrl: defaultBaseUrl }) {
     this.#baseUrl = options.baseUrl ?? defaultBaseUrl;
@@ -46,6 +57,9 @@ export class JapanPostAPI {
     }
     this.#tokenExpiresAt = 0;
     this.#autoTokenRefresh = options.autoTokenRefresh ?? !tokenPassed;
+    this.#retryOptions = options.retryOptions ?? {};
+    this.#circuitBreaker = new CircuitBreaker(options.circuitBreakerOptions);
+    this.#enableValidation = options.enableValidation ?? true;
   }
 
   async initToken(options?: JapanPostTokenInitOptions): Promise<void> {
@@ -89,6 +103,11 @@ export class JapanPostAPI {
   }
 
   async searchcode(request: SearchcodeRequest): Promise<SearchcodeResponse> {
+    // Execute validation
+    if (this.#enableValidation) {
+      validateSearchcodeRequest(request);
+    }
+
     const searchCode = request.search_code.replace("-", "");
     const queryParams: Record<string, any> = { ...request };
     delete queryParams["search_code"];
@@ -102,6 +121,11 @@ export class JapanPostAPI {
   }
 
   async *searchcodeAll(request: SearchcodeRequest): AsyncGenerator<SearchcodeResponse, void, unknown> {
+    // Execute validation
+    if (this.#enableValidation) {
+      validateSearchcodeRequest(request);
+    }
+
     let page = request.page ?? 1;
     const limit = request.limit ?? 1000;
     while (true) {
@@ -118,6 +142,11 @@ export class JapanPostAPI {
   }
 
   async addresszip(request: AddresszipRequest): Promise<AddresszipResponse> {
+    // Execute validation
+    if (this.#enableValidation) {
+      validateAddresszipRequest(request);
+    }
+
     return this.#call<AddresszipResponse>({
       method: "POST",
       path: "/api/v1/addresszip",
@@ -127,6 +156,11 @@ export class JapanPostAPI {
   }
 
   async *addresszipAll(request: AddresszipRequest): AsyncGenerator<AddresszipResponse, void, unknown> {
+    // Execute validation
+    if (this.#enableValidation) {
+      validateAddresszipRequest(request);
+    }
+
     let page = request.page ?? 1;
     const limit = request.limit ?? 1000;
     while (true) {
@@ -142,6 +176,30 @@ export class JapanPostAPI {
     }
   }
 
+  /**
+   * Update retry configuration
+   */
+  updateRetryOptions(options: RetryOptions): void {
+    this.#retryOptions = { ...this.#retryOptions, ...options };
+  }
+
+  /**
+   * Get circuit breaker state
+   */
+  getCircuitBreakerState() {
+    return {
+      state: this.#circuitBreaker.getState(),
+      failureCount: this.#circuitBreaker.getFailureCount(),
+    };
+  }
+
+  /**
+   * Reset circuit breaker
+   */
+  resetCircuitBreaker(): void {
+    this.#circuitBreaker.reset();
+  }
+
   async #call<Response>({
     method,
     path,
@@ -150,65 +208,73 @@ export class JapanPostAPI {
     formParams,
     callTokenRefresh,
   }: CallParams): Promise<Response> {
-    if (callTokenRefresh && this.tokenExpired()) {
-      debugLog(() => {
-        if (this.#token) {
-          return "Token expired, refreshing...";
-        } else {
-          return "No token, initializing...";
+    // Execute API call with circuit breaker and retry functionality
+    return await this.#circuitBreaker.execute(async () => {
+      return await withRetry(async () => {
+        if (callTokenRefresh && this.tokenExpired()) {
+          debugLog(() => {
+            if (this.#token) {
+              return "Token expired, refreshing...";
+            } else {
+              return "No token, initializing...";
+            }
+          });
+          await this.initToken();
         }
-      });
-      await this.initToken();
-    }
 
-    const finalPath = path.replace(/{([^}]+)}/g, (match, key) => pathParams?.[key] ?? match);
-    const query = Object.keys(queryParams || {}).length > 0 ? `?${new URLSearchParams(queryParams).toString()}` : "";
-    const url = `${this.#baseUrl}${finalPath}`.replace("//api", "/api") + query;
-    const token = formParams ? (formParams.token ?? this.#token) : this.#token;
-    const _params: any = {};
-    Object.assign(_params, formParams);
-    if (_params && _params.token) {
-      delete _params.token;
-    }
-    const headers: Record<string, string> = { "Content-Type": "application/json" };
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-    const body = method === "POST" ? JSON.stringify(_params) : undefined;
-    debugLog(() => `JapanPost API request (${method} ${url}): ${body}`);
-    const request: Request = new Request(url, { method, headers, body });
-    let response: globalThis.Response | null = null;
-    let responseBody: string | null = null;
-    try {
-      response = await fetch(request);
-      responseBody = await response.text();
-      debugLog(() => {
-        if (response !== null) {
-          return `JapanPost API response - url: ${response.url}, status: ${response.status}, body: ${responseBody}`;
-        } else {
-          return `JapanPost API response - body: ${responseBody}`;
+        const finalPath = path.replace(/{([^}]+)}/g, (match, key) => pathParams?.[key] ?? match);
+        const query =
+          Object.keys(queryParams || {}).length > 0 ? `?${new URLSearchParams(queryParams).toString()}` : "";
+        const url = `${this.#baseUrl}${finalPath}`.replace("//api", "/api") + query;
+        const token = formParams ? (formParams.token ?? this.#token) : this.#token;
+        const _params: any = {};
+        Object.assign(_params, formParams);
+        if (_params && _params.token) {
+          delete _params.token;
         }
-      });
-      const body = JSON.parse(responseBody);
-      if (body.error_code) {
-        throw new JapanPostAPIError({
-          status: response.status,
-          body: responseBody,
-          headers: Object.fromEntries(response.headers),
-        });
-      }
-      return body;
-    } catch (e) {
-      debugLog(() => `JapanPost API error: ${e}`);
-      if (response) {
-        throw new JapanPostAPIError({
-          status: response.status,
-          body: responseBody || "",
-          headers: Object.fromEntries(response.headers),
-        });
-      } else {
-        throw e;
-      }
-    }
+        const headers: Record<string, string> = { "Content-Type": "application/json" };
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+        const body = method === "POST" ? JSON.stringify(_params) : undefined;
+        debugLog(() => `JapanPost API request (${method} ${url}): ${body}`);
+        const request: Request = new Request(url, { method, headers, body });
+        let response: globalThis.Response | null = null;
+        let responseBody: string | null = null;
+        try {
+          response = await fetch(request);
+          responseBody = await response.text();
+          debugLog(() => {
+            if (response !== null) {
+              return `JapanPost API response - url: ${response.url}, status: ${response.status}, body: ${responseBody}`;
+            } else {
+              return `JapanPost API response - body: ${responseBody}`;
+            }
+          });
+          const body = JSON.parse(responseBody);
+          if (body.error_code) {
+            throw JapanPostAPIError.createFromResponse({
+              status: response.status,
+              body: responseBody,
+              headers: Object.fromEntries(response.headers),
+            });
+          }
+          return body;
+        } catch (e: unknown) {
+          debugLog(() => `JapanPost API error: ${e}`);
+          if (response) {
+            throw JapanPostAPIError.createFromResponse({
+              status: response.status,
+              body: responseBody || "",
+              headers: Object.fromEntries(response.headers),
+            });
+          } else {
+            // Treat as network error
+            const error = e instanceof Error ? e : new Error(String(e));
+            throw new NetworkError(error);
+          }
+        }
+      }, this.#retryOptions);
+    });
   }
 }
