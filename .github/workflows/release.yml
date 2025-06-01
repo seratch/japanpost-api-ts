@@ -44,6 +44,23 @@ jobs:
       - name: Build
         run: npm run build:clean
 
+      - name: Verify npm authentication
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
+          npm whoami
+          echo "Current user authenticated successfully"
+
+      - name: Debug package info
+        run: |
+          echo "Package name: $(npm pkg get name)"
+          echo "Package version: $(npm pkg get version)"
+          echo "Registry: $(npm config get registry)"
+          ls -la dist/
+          echo "Files to be published:"
+          npm pack --dry-run
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
