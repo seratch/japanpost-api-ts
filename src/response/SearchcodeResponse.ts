@@ -1,18 +1,18 @@
 export type SearchcodeResponse = {
   /**
-   * ページ数 (デフォルト値:1)
+   * ページ数 (デフォルト値:1) / Page number (default: 1)
    */
   page: number;
   /**
-   * 取得最大レコード数 (デフォルト値:1000、最大値:1000)
+   * 取得最大レコード数 (デフォルト値:1000、最大値:1000) / Maximum number of records retrieved (default: 1000, max: 1000)
    */
   limit: number;
   /**
-   * 該当データ数
+   * 該当データ数 / Number of matching data
    */
   count: number;
   /**
-   * 検索タイプ (dgacode/zipcode/bizzipcodeのいずれか)
+   * 検索タイプ (dgacode/zipcode/bizzipcodeのいずれか) / Search type (one of dgacode/zipcode/bizzipcode)
    */
   searchtype: string;
 

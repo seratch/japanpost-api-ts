@@ -1,18 +1,18 @@
 export type AddresszipResponse = {
   /**
-   * マッチングレベル
+   * マッチングレベル / Matching level
    */
   level: number;
   /**
-   * ページ数
+   * ページ数 / Page number
    */
   page: number;
   /**
-   * 取得最大レコード数
+   * 取得最大レコード数 / Maximum number of records retrieved
    */
   limit: number;
   /**
-   * 該当データ数
+   * 該当データ数 / Number of matching data
    */
   count: number;
 

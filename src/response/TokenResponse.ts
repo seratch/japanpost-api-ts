@@ -1,18 +1,18 @@
 export type TokenResponse = {
   /**
-   * アクセストークン
+   * アクセストークン / Access token
    */
   token: string;
   /**
-   * トークンタイプ
+   * トークンタイプ / Token type
    */
   token_type: string;
   /**
-   * 有効秒数
+   * 有効秒数 / Validity period in seconds
    */
   expires_in: number;
   /**
-   * スコープ
+   * スコープ / Scope
    */
   scope: string;
 };

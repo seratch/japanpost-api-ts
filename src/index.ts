@@ -1,9 +1,36 @@
 export { JapanPostAPI } from "./JapanPostAPI";
 export type { JapanPostAPIOptions, JapanPostTokenInitOptions } from "./JapanPostAPI";
-export { JapanPostAPIError, JapanPostAPIErrorBody, JapanPostAPIErrorOptions } from "./JapanPostAPIError";
-export type { TokenRequest } from "./request/TokenRequest";
-export type { TokenResponse } from "./response/TokenResponse";
+export {
+  JapanPostAPIError,
+  AuthenticationError,
+  AuthorizationError,
+  RateLimitError,
+  ClientError,
+  ServerError,
+  NetworkError,
+  GeneralAPIError,
+  ValidationError,
+} from "./JapanPostAPIError";
+export {
+  validateSearchcodeRequest,
+  validateAddresszipRequest,
+  isValidPrefCode,
+  isValidPrefName,
+  getPrefCodeFromName,
+  type PrefCode,
+} from "./validation";
+export {
+  withRetry,
+  CircuitBreaker,
+  CircuitBreakerState,
+  type RetryOptions,
+  type CircuitBreakerOptions,
+} from "./retry";
+
+// Request/Response types
 export type { SearchcodeRequest } from "./request/SearchcodeRequest";
-export type { SearchcodeResponse, Address } from "./response/SearchcodeResponse";
 export type { AddresszipRequest } from "./request/AddresszipRequest";
-export type { AddresszipResponse, AddressZip } from "./response/AddresszipResponse";
+export type { TokenRequest } from "./request/TokenRequest";
+export type { SearchcodeResponse } from "./response/SearchcodeResponse";
+export type { AddresszipResponse } from "./response/AddresszipResponse";
+export type { TokenResponse } from "./response/TokenResponse";
